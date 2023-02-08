@@ -42,10 +42,9 @@ from sklearn.metrics import fbeta_score, make_scorer, SCORERS
 
 
 def load_data(database_filepath):
-    table_name = 'labeled_messages'
-    # load data from database
-    engine = create_engine('sqlite:///{}'.format(database_filepath))
-    df = pd.read_sql_table('InsertTableName', engine)
+    table_name = 'disaster_response'
+    engine = create_engine('sqlite:///{}'.format(database_filename))
+    df = pd.read_sql_table(table_name, engine)
     X =  df['message'].values
     Y = df.iloc[:, 4:].values
 
@@ -56,10 +55,10 @@ def tokenize(text):
     text = [w for w in text if w not in stopwords.words('english')]
     stem_text = [PorterStemmer().stem(w) for w in text]
     
-    lem_text = [WordNetLemmatizer().lemmatize(w, pos='v') for w in           stem_text]
+    lem_text = [WordNetLemmatizer().lemmatize(w, pos='v') for w in stem_text]
     
 
-    return lemmed
+    return lem_text
     
 
 
@@ -70,6 +69,7 @@ def build_model():
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
     
         ])
+    
     parameters = {
         
         'clf__estimator__oob_score': [True],
@@ -88,7 +88,7 @@ def display_results(cv, y_test, y_pred):
     accuracy = (y_pred == y_test).mean()
     print("Labels:", labels)
     print("Accuracy:", accuracy)
-    print("Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test[0],                                 grid_fit.best_estimator_.predict(X_test)        [0], beta = 0.5, average = "micro")))
+    print("Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test[0],                                 grid_fit.best_estimator_.predict(X_test) [0], beta = 0.5, average = "micro")))
     print("\nBest Parameters:", cv.best_params_)
     
 

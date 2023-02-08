@@ -10,7 +10,8 @@ def load_data(messages_filepath, categories_filepath):
     
     return df
 
-def clean_data (df)
+def clean_data (df):
+    
     categories = df['categories'].str.split(';',expand=True)
     # select the first row of the categories dataframe
     row = categories.iloc[0]
@@ -39,8 +40,10 @@ def clean_data (df)
 
 
 def save_data(df, database_filename):
+    
+    table_name = 'disaster_response'
     engine = create_engine('sqlite:///{}'.format(database_filename))
-    df.to_sql(disaster, engine, index=False)  
+    df.to_sql(table_name, engine, if_exists='replace', index=False,chunksize = 500)  
 
 
 def main():
@@ -59,6 +62,7 @@ def main():
         save_data(df, database_filepath)
         
         print('Cleaned data saved to database!')
+        
     
     else:
         print('Please provide the filepaths of the messages and categories '\
