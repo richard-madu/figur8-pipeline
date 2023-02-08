@@ -43,7 +43,7 @@ from sklearn.metrics import fbeta_score, make_scorer, SCORERS
 
 def load_data(database_filepath):
     table_name = 'disaster_response'
-    engine = create_engine('sqlite:///{}'.format(database_filename))
+    engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table(table_name, engine)
     X =  df['message'].values
     Y = df.iloc[:, 4:].values
