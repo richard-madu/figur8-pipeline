@@ -46,7 +46,11 @@ def load_data(database_filepath):
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table(table_name, engine)
     X =  df['message'].values
-    Y = df.iloc[:, 4:].values
+    Y = df[df.columns[4:]]
+    
+    category_names = Y.columns.tolist()
+    
+    return X, Y, category_names
 
 def tokenize(text):
     text = text.lower()
@@ -79,6 +83,7 @@ def build_model():
 
     cv = GridSearchCV(pipeline, param_grid=parameters)
     
+    
     return cv
 
 
@@ -90,12 +95,19 @@ def display_results(cv, y_test, y_pred):
     print("Accuracy:", accuracy)
     print("Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test[0],                                 grid_fit.best_estimator_.predict(X_test) [0], beta = 0.5, average = "micro")))
     print("\nBest Parameters:", cv.best_params_)
+    print('Accuracy {}\n\n'.format(accuracy_score(Y_test.iloc[:, i].values, y_pred[:, i])))
     
 
 
-def evaluate_model(model, X_test, Y_test, category_names):
-    y_pred = model.predict()
-    display_result(cv,y_test,y_pred)
+def evaluate_model(cv, X_test, Y_test, category_names):
+    y_pred = cv.predict(X_test)
+        
+    for i in range(len(category_names)):
+        
+        print('Category: {} '.format(category_names[i]))
+        print(classification_report(Y_test.iloc[:, i].values, y_pred[:, i]))
+        print('Accuracy {}\n\n'.format(accuracy_score(Y_test.iloc[:, i].values, y_pred[:, i])))
+
 
 def save_model(model, model_filepath):
     pickle.dump(model, open(model_filepath, 'wb'))
