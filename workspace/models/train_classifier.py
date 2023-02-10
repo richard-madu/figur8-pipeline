@@ -88,7 +88,7 @@ def tokenize(text):
     text = [w for w in text if w not in stopwords.words('english')]
     
     # lemminize the words
-    lem_text = [WordNetLemmatizer().lemmatize(w, pos='v') for w in stem_text]
+    lem_text = [WordNetLemmatizer().lemmatize(w, pos='v') for w in text]
     
 
     return lem_text
