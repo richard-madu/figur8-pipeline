@@ -42,23 +42,52 @@ from sklearn.metrics import fbeta_score, make_scorer, SCORERS
 
 
 def load_data(database_filepath):
+    
+    """
+    load data from the database and split them to X and Y for training and testing
+    
+    input: database filepath
+    
+    output: X,Y and category names
+    
+    """
+    # read the data from the data
     table_name = 'disaster_response'
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table(table_name, engine)
+    #split the data
     X =  df['message'].values
     Y = df[df.columns[4:]]
-    
+   
+    # extract the categories
     category_names = Y.columns.tolist()
     
     return X, Y, category_names
 
 def tokenize(text):
-    text = text.lower()
-    text = re.sub(r"[^a-zA-Z0-9]", ' ', text)
-    text = word_tokenize(text)
-    text = [w for w in text if w not in stopwords.words('english')]
-    stem_text = [PorterStemmer().stem(w) for w in text]
     
+    """
+    loads the text and convert them to lower case and apply Lemmatizer to group together different forms of the same word
+    
+    input: text
+    
+    output:a lemmatized text (lem_text)
+    
+    """
+    
+    # normalize text
+    text = text.lower()
+    
+    # remove extra characters
+    text = re.sub(r"[^a-zA-Z0-9]", ' ', text)
+   
+# tokenize each word
+    text = word_tokenize(text)
+    
+  # remove stop words
+    text = [w for w in text if w not in stopwords.words('english')]
+    
+    # lemminize the words
     lem_text = [WordNetLemmatizer().lemmatize(w, pos='v') for w in stem_text]
     
 
@@ -67,6 +96,14 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Uses multiple machine learning model to transform and classify text 
+    
+    
+    
+    """
+    
+    # write the pipeline model
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -81,6 +118,8 @@ def build_model():
         
         }
 
+    
+    # Gridsearch
     cv = GridSearchCV(pipeline, param_grid=parameters)
     
     
@@ -88,28 +127,35 @@ def build_model():
 
 
 
-def display_results(cv, y_test, y_pred):
-    labels = np.unique(y_pred)
-    accuracy = (y_pred == y_test).mean()
-    print("Labels:", labels)
-    print("Accuracy:", accuracy)
-    print("Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test[0],                                 grid_fit.best_estimator_.predict(X_test) [0], beta = 0.5, average = "micro")))
-    print("\nBest Parameters:", cv.best_params_)
-    print('Accuracy {}\n\n'.format(accuracy_score(Y_test.iloc[:, i].values, y_pred[:, i])))
-    
-
-
 def evaluate_model(cv, X_test, Y_test, category_names):
+    
+    """
+    evaluate the model
+    
+    input: the model, X_test, Y_test and category names
+    
+    output: category names, y_pred and the accuracy score
+    
+    """
+    
+      # use the model to predict the y variable
     y_pred = cv.predict(X_test)
         
     for i in range(len(category_names)):
         
         print('Category: {} '.format(category_names[i]))
+        # print the y_pred
         print(classification_report(Y_test.iloc[:, i].values, y_pred[:, i]))
+        # print the accuracy score
         print('Accuracy {}\n\n'.format(accuracy_score(Y_test.iloc[:, i].values, y_pred[:, i])))
 
 
 def save_model(model, model_filepath):
+    
+    """
+    save the model in a pickle file
+    """
+    
     pickle.dump(model, open(model_filepath, 'wb'))
 
 
