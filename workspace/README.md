@@ -18,15 +18,25 @@ Following a disaster, disaster agencies get millions of communication either dir
 The following libraries were used to excute this project
 
 Numpy
+
 Pandas
+
 Matplot
+
 Seaborn
+
 Scikit Learn
+
 Sqlalchemy
+
 Re
+
 NLTK
+
 Plotly
+
 Json
+
 Flask
 
 ## STACKS
