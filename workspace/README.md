@@ -1,5 +1,5 @@
 # Disaster Response Pipeline Project
-In this project I implimenting data engineering process in building an ETL and a NLP pipeline as well as creating a web app with flask. As part of my task I would be reparing the data with an ETL pipeline and using a machine learning to build a supervised learning model.
+In this project, I implemented a data engineering process in building an ETL and an NLP pipeline as well as creating a web app with flask. As part of my task, I would be repairing the data with an ETL pipeline and using machine learning to build a supervised learning model to classify messages in to categories. 
 
 ## ACKNOWLEDGE
 
